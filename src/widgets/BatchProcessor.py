@@ -20,12 +20,8 @@ from PySide6.QtWidgets import (
 class CentralWidget(QWidget):
     def __init__(self):
         super().__init__()
-        self.__init_property()
         self.__init_ui()
         self.__connect_signal_to_slot()
-
-    def __init_property(self):
-        pass
 
     def __init_ui(self):
         # Directory Section
@@ -165,7 +161,61 @@ finally:
             )
         # Extract thumbnails from each folders
         elif idx == 2:
-            pass
+            self.__text_area.setPlainText(
+                """try:
+    self._Worker__signals.started.emit()
+
+    from os import walk
+    from pathlib import Path
+    import re
+    from shutil import move
+
+    img_exts = {".png", ".webp", ".gif", ".jpg", ".jpeg", ".bmp", ".jfif", ".tga", ".tif", ".tiff", ".psd", ".psb", ".pbm", ".ai", ".svg"}
+    thumbnail_paths = []
+
+    for root, _, files in walk(top=self._Worker__src_folder_path):
+        if not files:
+            continue
+
+        for name in files:
+            file_path = Path(f"{root}/{name}")
+
+            if file_path.suffix in img_exts:
+                thumbnail_paths.append(file_path)
+                break
+
+    # idx starts at 0, so (total count - 1)
+    thumbnails_count = len(thumbnail_paths) - 1
+
+    self._Worker__signals.loaded.emit()
+
+    for idx, thumbnail_path in enumerate(thumbnail_paths):
+        try:
+            if m := re.search(r'(?<=\[).*?(?=\])', thumbnail_path.parent.name):
+                new_thumbnail_folder_path = Path(f"{self._Worker__dst_folder_path}/{m.group()}")
+
+                if not new_thumbnail_folder_path.exists():
+                    new_thumbnail_folder_path.mkdir(parents=True, exist_ok=True)
+
+                move(src=thumbnail_path, dst=Path(f"{str(new_thumbnail_folder_path.resolve())}/{thumbnail_path.parent.name}{thumbnail_path.suffix}"))
+
+                percentage = int(((idx) / thumbnails_count) * 100.0)
+
+                self._Worker__signals.progress.emit(percentage)
+            else:
+                raise Exception("No pattern matching")
+        except Exception as e:
+            self._Worker__log_error(e, f"Thumbnail_Path: {thumbnail_path}")
+            self._Worker__signals.error.emit()
+except Exception as e:
+    self._Worker__log_error(e)
+    self._Worker__signals.error.emit()
+else:
+    self._Worker__signals.success.emit()
+finally:
+    self._Worker__signals.finished.emit()
+"""
+            )
 
     # @Slot()
     def __execute_code(self):
