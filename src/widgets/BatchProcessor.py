@@ -9,19 +9,23 @@ from PySide6.QtWidgets import (
     QLineEdit,
     QGridLayout,
     QGroupBox,
-    QFileDialog,
     QComboBox,
     QPlainTextEdit,
-    QMessageBox,
     QProgressBar,
+    QFileDialog,
+    QMessageBox,
 )
 
 
 class CentralWidget(QWidget):
     def __init__(self):
         super().__init__()
+        self.__init_property()
         self.__init_ui()
         self.__connect_signal_to_slot()
+
+    def __init_property(self):
+        pass
 
     def __init_ui(self):
         # Directory Section
@@ -121,7 +125,44 @@ class CentralWidget(QWidget):
             self.__text_area.clear()
         # Create folders from files
         elif idx == 1:
-            pass
+            self.__text_area.setPlainText(
+                """try:
+    self._Worker__signals.started.emit()
+
+    from os import walk
+    from pathlib import Path
+
+    names = []
+
+    for root, _, files in walk(top=self._Worker__src_folder_path):
+        if not files:
+            continue
+
+        for name in files:
+            names.append(Path(f"{root}/{name}").stem)
+
+    # idx starts at 0, so (total count - 1)
+    names_count = len(names) - 1
+
+    self._Worker__signals.loaded.emit()
+
+    for idx, name in enumerate(names):
+        dst_file_path = Path(f"{self._Worker__dst_folder_path}/{name}")
+
+        dst_file_path.mkdir(parents=True, exist_ok=True)
+
+        percentage = int(((idx) / names_count) * 100.0)
+
+        self._Worker__signals.progress.emit(percentage)
+except Exception as e:
+    self._Worker__log_error(e)
+    self._Worker__signals.error.emit()
+else:
+    self._Worker__signals.success.emit()
+finally:
+    self._Worker__signals.finished.emit()
+"""
+            )
         # Extract thumbnails from each folders
         elif idx == 2:
             pass
