@@ -1,5 +1,7 @@
 # Batch processor with python code
 
+This desktop application applies your python code to multiple files in batches.
+
 ## Built With
 
 - GUI
