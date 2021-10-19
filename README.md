@@ -1,5 +1,7 @@
 # Batch processor with python code
 
+![screenshot](https://github.com/hummingengineer/batch-processor-with-python-code/blob/master/screenshot.png)
+
 This desktop application applies your python code to multiple files in batches.
 
 ## Built With
